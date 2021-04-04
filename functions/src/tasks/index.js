@@ -26,3 +26,23 @@ exports.getTasks = (req, res) => {
         })
         .catch((err) => res.status(500).send("get tasks failed:", err));
 };
+
+exports.postTask = (req, res) => {
+
+    console.log('req body ** ', req.body)
+
+    if(!req.body) {
+        res.status(400).send('Invalid Post')
+    }
+    dbAuth()
+    let now = admin.firestore.FieldValue.serverTimestamp()
+    const newTask = {
+        name: req.body,
+        created: now
+    }
+    db.collection('tasks').add(newTask)
+        .then(() => {
+            this.getTasks(req, res)
+        })
+        .catch(err => res.status(500).send('post failed', err))
+}
