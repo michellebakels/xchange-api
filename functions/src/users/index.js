@@ -12,34 +12,34 @@ function dbAuth() {
     }
 }
 
-exports.getTasks = (req, res) => {
+exports.getUsers = (req, res) => {
     dbAuth()
-    db.collection('tasks')
+    db.collection('users')
         .get()
         .then((collection) => {
-            const tasks = collection.docs.map((doc) => {
-                let task = doc.data();
-                task.id = doc.id;
-                return task;
+            const users = collection.docs.map((doc) => {
+                let user = doc.data();
+                user.id = doc.id;
+                return user;
             });
-            res.status(200).send(tasks);
+            res.status(200).send(users);
         })
-        .catch((err) => res.status(500).send("get tasks failed:", err));
+        .catch((err) => res.status(500).send("get users failed:", err));
 };
 
-exports.postTask = (req, res) => {
+exports.postUser = (req, res) => {
     if(!req.body) {
         res.status(400).send('Invalid Post')
     }
     dbAuth()
     let now = admin.firestore.FieldValue.serverTimestamp()
-    const newTask = {
-        task: req.body,
+    const newUser = {
+        user: req.body,
         created: now
     }
-    db.collection('tasks').add(newTask)
+    db.collection('users').add(newUser)
         .then(() => {
-            this.getTasks(req, res)
+            this.getUsers(req, res)
         })
         .catch(err => res.status(500).send('post failed', err))
 }
