@@ -27,6 +27,24 @@ exports.getTasks = (req, res) => {
         .catch((err) => res.status(500).send("get tasks failed:", err));
 };
 
+exports.getUserTasks = (req, res) => {
+    if(!req.params.userId) {
+        res.status(400).send('Invalid Post')
+    }
+    dbAuth()
+    db.collection('tasks').where('userId', '==', req.params.userId)
+        .get()
+        .then((collection) => {
+            const tasks = collection.docs.map((doc) => {
+                let task = doc.data();
+                task.id = doc.id;
+                return task;
+            });
+            res.status(200).send(tasks);
+        })
+        .catch((err) => res.status(500).send("get tasks failed:", err));
+};
+
 exports.postTask = (req, res) => {
     if(!req.body) {
         res.status(400).send('Invalid Post')
