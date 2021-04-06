@@ -1,5 +1,5 @@
 const admin = require("firebase-admin");
-const serviceAccount = require("../../cred.json");
+const serviceAccount = require("../../credentials.json");
 
 let db;
 
