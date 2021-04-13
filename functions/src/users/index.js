@@ -28,6 +28,19 @@ exports.getUsers = (req, res) => {
     .catch((err) => res.status(500).send("get users failed:", err));
 };
 
+exports.getSingleUser = (req, res) => {
+  dbAuth()
+  db.collection("users")
+  .doc(req.params.userId)
+  .get()
+  .then((doc) => {
+      let user = doc.data()
+      user.id = doc.id
+      res.status(200).send(user);
+  })
+  .catch((err) => res.status(500).send("get user failed:", err));
+}
+
 exports.postUser = (req, res) => {
   if (!req.body) {
     res.status(400).send("Invalid Post");
