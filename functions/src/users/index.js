@@ -28,6 +28,22 @@ exports.getUsers = (req, res) => {
     .catch((err) => res.status(500).send("get users failed:", err));
 };
 
+exports.getSingleUser = (req, res) => {
+  dbAuth()
+  db.collection("users")
+  .doc(req.params.userId)
+  .get()
+  .then((collection) => {
+    const singleUser = collection.docs.map((doc) => {
+      let user = doc.data()
+      user.id = doc.id
+      return user
+    })
+    res.status(200).send(singleUser);
+  })
+  .catch((err) => res.status(500).send("get user failed:", err));
+}
+
 exports.postUser = (req, res) => {
   if (!req.body) {
     res.status(400).send("Invalid Post");
