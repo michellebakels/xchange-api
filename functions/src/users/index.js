@@ -33,13 +33,10 @@ exports.getSingleUser = (req, res) => {
   db.collection("users")
   .doc(req.params.userId)
   .get()
-  .then((collection) => {
-    const singleUser = collection.docs.map((doc) => {
+  .then((doc) => {
       let user = doc.data()
       user.id = doc.id
-      return user
-    })
-    res.status(200).send(singleUser);
+      res.status(200).send(user);
   })
   .catch((err) => res.status(500).send("get user failed:", err));
 }
