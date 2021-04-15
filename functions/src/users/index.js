@@ -29,7 +29,6 @@ exports.getUsers = (req, res) => {
 
 exports.getSingleUser = (req, res) => {
   dbAuth();
-  console.log(req.params.email);
   db.collection("users")
     .where("email", "==", req.params.email)
     .get()
