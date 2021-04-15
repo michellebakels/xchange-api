@@ -1,7 +1,6 @@
 const admin = require("firebase-admin");
 const serviceAccount = require("../../credentials.json");
 
-
 let db;
 
 function dbAuth() {
@@ -29,17 +28,17 @@ exports.getUsers = (req, res) => {
 };
 
 exports.getSingleUser = (req, res) => {
-  dbAuth()
+  dbAuth();
   db.collection("users")
-  .doc(req.params.userId)
-  .get()
-  .then((doc) => {
-      let user = doc.data()
-      user.id = doc.id
-      res.status(200).send(user);
-  })
-  .catch((err) => res.status(500).send("get user failed:", err));
-}
+    .where("email", "==", req.params.email)
+    .get()
+    .then((querySnapshot) => {
+      querySnapshot.forEach((doc) => {
+        res.status(200).send(doc.data())
+      });
+    })
+    .catch((err) => res.status(500).send("get user failed:", err));
+};
 
 exports.postUser = (req, res) => {
   if (!req.body) {
@@ -65,7 +64,7 @@ exports.updateUser = (req, res) => {
   }
   dbAuth();
   const updateUser = {
-    user: req.body
+    user: req.body,
   };
   db.collection("users")
     .doc(req.params.userId)

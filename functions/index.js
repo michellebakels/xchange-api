@@ -16,7 +16,7 @@ app.get('/tasks/:userId', getUserTasks)
 app.post('/tasks', postTask)
 
 app.get('/users', getUsers)
-app.get('/users/:userId', getSingleUser)
+app.get('/users/:email', getSingleUser)
 app.post('/users', postUser)
 app.patch('/users/:userId', updateUser)
 
