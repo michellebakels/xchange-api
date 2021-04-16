@@ -29,8 +29,9 @@ exports.getUsers = (req, res) => {
 
 exports.getSingleUser = (req, res) => {
   dbAuth();
+  const email = req.params? req.params.email : req.body.email
   db.collection("users")
-    .where("email", "==", req.params.email)
+    .where("email", "==", email)
     .get()
     .then((querySnapshot) => {
       querySnapshot.forEach((doc) => {
@@ -45,16 +46,24 @@ exports.postUser = (req, res) => {
     res.status(400).send("Invalid Post");
   }
   dbAuth();
+  const usersRef = db.collection("users");
   let now = admin.firestore.FieldValue.serverTimestamp();
-  const newUser = {
-    user: req.body,
-    created: now,
-  };
-  db.collection("users")
-    .add(newUser)
-    .then(() => {
-      this.getUsers(req, res);
-    })
+  const newUser = req.body;
+  newUser.created = now;
+  usersRef.add(newUser)
+      .then(docRef => {
+        usersRef.doc(docRef.id).get()
+            .then(snapshot => {
+              let user = snapshot.data()
+              user.id = snapshot.id
+              res.status(200).send({
+                status: 'success',
+                data: user,
+                message: 'User created',
+                statusCode: 200
+              })
+            })
+      })
     .catch((err) => res.status(500).send("post failed", err));
 };
 
@@ -70,7 +79,7 @@ exports.updateUser = (req, res) => {
     .doc(req.params.userId)
     .update(updateUser)
     .then(() => {
-      this.getUsers(req, res);
+      this.getSingleUser(req, res);
     })
     .catch((err) => res.status(500).send("update failed", err));
 };
