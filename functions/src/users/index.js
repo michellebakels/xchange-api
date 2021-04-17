@@ -29,13 +29,19 @@ exports.getUsers = (req, res) => {
 
 exports.getSingleUser = (req, res) => {
   dbAuth();
-  const email = req.params? req.params.email : req.body.email
   db.collection("users")
-    .where("email", "==", email)
+    .where("email", "==", req.params.email)
     .get()
     .then((querySnapshot) => {
       querySnapshot.forEach((doc) => {
-        res.status(200).send(doc.data())
+          let user = doc.data()
+          user.id = doc.id
+        res.status(200).send({
+            status: 'success',
+            data: user,
+            message: 'User created',
+            statusCode: 200
+        })
       });
     })
     .catch((err) => res.status(500).send("get user failed:", err));
