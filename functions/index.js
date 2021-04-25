@@ -6,7 +6,7 @@ const app = express();
 const cors = require("cors");
 
 const { getTasks, postTask, getUserTasks } = require("./src/tasks");
-const { getUsers, postUser, updateUser, getSingleUser } = require("./src/users");
+const { getUsers, postUser, updateUser, getSingleUser, getUserById } = require("./src/users");
 
 app.use(bodyParser.json());
 app.use(cors());
@@ -17,6 +17,7 @@ app.post('/tasks', postTask)
 
 app.get('/users', getUsers)
 app.get('/users/:email', getSingleUser)
+app.get('/users/id/:userId', getUserById)
 app.post('/users', postUser)
 app.patch('/users/:userId', updateUser)
 

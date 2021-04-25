@@ -51,13 +51,21 @@ exports.postTask = (req, res) => {
     }
     dbAuth()
     let now = admin.firestore.FieldValue.serverTimestamp()
-    const newTask = {
-        task: req.body,
-        created: now
-    }
+    const newTask = req.body
+    newTask.created = now
     db.collection('tasks').add(newTask)
-        .then(() => {
-            this.getTasks(req, res)
+        .then((docRef) => {
+            db.collection('tasks').doc(docRef.id).get()
+                .then(snapshot => {
+                    let task = snapshot.data()
+                    task.id = snapshot.id
+                    res.status(200).send({
+                        status: 'success',
+                        data: task,
+                        message: 'Task created',
+                        statusCode: 200
+                    })
+                })
         })
         .catch(err => res.status(500).send('post failed', err))
 }
