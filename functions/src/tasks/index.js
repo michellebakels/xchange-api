@@ -22,7 +22,12 @@ exports.getTasks = (req, res) => {
                 task.id = doc.id;
                 return task;
             });
-            res.status(200).send(tasks);
+            res.status(200).send({
+                status: 'success',
+                data: tasks,
+                message: 'Tasks found',
+                statusCode: 200
+            })
         })
         .catch((err) => res.status(500).send("get tasks failed:", err));
 };
@@ -40,7 +45,12 @@ exports.getUserTasks = (req, res) => {
                 task.id = doc.id;
                 return task;
             });
-            res.status(200).send(tasks);
+            res.status(200).send({
+                status: 'success',
+                data: tasks,
+                message: 'User tasks found',
+                statusCode: 200
+            });
         })
         .catch((err) => res.status(500).send("get tasks failed:", err));
 };

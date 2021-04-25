@@ -68,13 +68,14 @@ exports.getUserById = (req, res) => {
 
 exports.postUser = (req, res) => {
   if (!req.body) {
-    res.status(400).send("Invalid Post");
+    res.status(400).send("Invalid Post")
   }
   dbAuth();
-  const usersRef = db.collection("users");
-  let now = admin.firestore.FieldValue.serverTimestamp();
-  const newUser = req.body;
-  newUser.created = now;
+  const usersRef = db.collection("users")
+  let now = admin.firestore.FieldValue.serverTimestamp()
+  const newUser = req.body
+  newUser.created = now
+  newUser.tokens = 0
   usersRef.add(newUser)
       .then(docRef => {
         usersRef.doc(docRef.id).get()
@@ -89,7 +90,7 @@ exports.postUser = (req, res) => {
               })
             })
       })
-    .catch((err) => res.status(500).send("post failed", err));
+    .catch((err) => res.status(500).send("post failed", err))
 };
 
 exports.updateUser = (req, res) => {
