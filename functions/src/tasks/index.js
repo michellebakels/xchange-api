@@ -12,6 +12,22 @@ function dbAuth() {
     }
 }
 
+exports.getTaskById = (req, res) => {
+    dbAuth()
+    res.set('Cache-Control', 'public, max-age=300, s-maxage=600')
+    if(!req.params || !req.params.taskId) {
+        res.send({ message: "No task specified"})
+        return
+    }
+    db.collection('tasks').doc(req.params.taskId).get()
+        .then(snapshot => {
+            let task = snapshot.data()
+            task.id = snapshot.id
+            res.send({data: task})
+        })
+        .catch(error => res.send({ error }))
+}
+
 exports.getTasks = (req, res) => {
     dbAuth()
     db.collection('tasks')
@@ -37,7 +53,7 @@ exports.getUserTasks = (req, res) => {
         res.status(400).send('Invalid Post')
     }
     dbAuth()
-    db.collection('tasks').where('userId', '==', req.params.userId)
+    db.collection('tasks').where('user.userId', '==', req.params.userId)
         .get()
         .then((collection) => {
             const tasks = collection.docs.map((doc) => {
