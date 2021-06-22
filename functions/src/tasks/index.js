@@ -95,3 +95,25 @@ exports.postTask = (req, res) => {
         })
         .catch(err => res.status(500).send('post failed', err))
 }
+
+exports.updateTask = (req, res) => {
+    if (!req.params.taskId) {
+        res.status(400).send("Invalid Update");
+    }
+    dbAuth();
+
+    let now = admin.firestore.FieldValue.serverTimestamp();
+    const updatedTask = req.body;
+    updatedTask.updated = now;
+
+    db.collection("tasks")
+        .doc(req.params.taskId)
+        .update(updatedTask)
+        .then(() => res.status(200).send({
+            status: 'success',
+            data: {taskId: req.params.taskId},
+            message: 'Task updated',
+            statusCode: 200
+        }))
+        .catch((err) => res.status(500).send('error'));
+};

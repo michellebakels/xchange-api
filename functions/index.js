@@ -5,7 +5,7 @@ const bodyParser = require("body-parser");
 const app = express();
 const cors = require("cors");
 
-const { getTasks, postTask, getUserTasks, getTaskById } = require("./src/tasks");
+const { getTasks, postTask, getUserTasks, getTaskById, updateTask } = require("./src/tasks");
 const { getUsers, postUser, updateUser, getSingleUser, getUserById } = require("./src/users");
 
 app.use(bodyParser.json());
@@ -14,6 +14,7 @@ app.use(cors());
 app.get('/tasks', getTasks)
 app.get('/tasks/:userId', getUserTasks)
 app.get('/tasks/id/:taskId', getTaskById)
+app.patch('/tasks/:taskId', updateTask)
 app.post('/tasks', postTask)
 
 app.get('/users', getUsers)
