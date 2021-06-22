@@ -53,7 +53,8 @@ exports.getUserTasks = (req, res) => {
         res.status(400).send('Invalid Post')
     }
     dbAuth()
-    db.collection('tasks').where('user.userId', '==', req.params.userId)
+    db.collection('tasks')
+        .where('user.userId', '==', req.params.userId)
         .get()
         .then((collection) => {
             const tasks = collection.docs.map((doc) => {
@@ -67,6 +68,27 @@ exports.getUserTasks = (req, res) => {
                 message: 'User tasks found',
                 statusCode: 200
             });
+        })
+        .catch((err) => res.status(500).send("get tasks failed:", err));
+};
+
+exports.getCompletedTasks = (req, res) => {
+    dbAuth()
+    db.collection('tasks')
+        .where("status", "==", "Done")
+        .get()
+        .then((collection) => {
+            const tasks = collection.docs.map((doc) => {
+                let task = doc.data();
+                task.id = doc.id;
+                return task;
+            });
+            res.status(200).send({
+                status: 'success',
+                data: tasks,
+                message: 'Tasks found',
+                statusCode: 200
+            })
         })
         .catch((err) => res.status(500).send("get tasks failed:", err));
 };
