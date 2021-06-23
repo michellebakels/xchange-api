@@ -1,19 +1,7 @@
 const admin = require("firebase-admin");
-const serviceAccount = require("../../credentials.json");
-
-let db;
-
-function dbAuth() {
-  if (!db) {
-    admin.initializeApp({
-      credentials: admin.credential.cert(serviceAccount),
-    });
-    db = admin.firestore();
-  }
-}
+const {db} = require('../../index')
 
 exports.getUsers = (req, res) => {
-  dbAuth();
   db.collection("users")
     .get()
     .then((collection) => {
@@ -28,7 +16,6 @@ exports.getUsers = (req, res) => {
 };
 
 exports.getSingleUser = (req, res) => {
-  dbAuth();
   db.collection("users")
     .where("email", "==", req.params.email)
     .get()
@@ -48,7 +35,6 @@ exports.getSingleUser = (req, res) => {
 };
 
 exports.getUserById = (req, res) => {
-    dbAuth();
     const usersRef = db.collection("users");
     usersRef
         .doc(req.params.userId)
@@ -70,7 +56,6 @@ exports.postUser = (req, res) => {
   if (!req.body) {
     res.status(400).send("Invalid Post")
   }
-  dbAuth();
   const usersRef = db.collection("users")
   let now = admin.firestore.FieldValue.serverTimestamp()
   const newUser = req.body
@@ -97,7 +82,6 @@ exports.updateUser = (req, res) => {
     if (!req.body) {
         res.status(400).send("Invalid Post");
     }
-    dbAuth();
 
     let now = admin.firestore.FieldValue.serverTimestamp();
     const updatedUser = req.body;

@@ -1,19 +1,8 @@
 const admin = require("firebase-admin");
-const serviceAccount = require("../../credentials.json");
+const {db} = require('../../index')
 
-let db;
-
-function dbAuth() {
-    if (!db) {
-        admin.initializeApp({
-            credentials: admin.credential.cert(serviceAccount),
-        });
-        db = admin.firestore();
-    }
-}
 
 exports.getTaskById = (req, res) => {
-    dbAuth()
     res.set('Cache-Control', 'public, max-age=300, s-maxage=600')
     if(!req.params || !req.params.taskId) {
         res.send({ message: "No task specified"})
@@ -29,7 +18,6 @@ exports.getTaskById = (req, res) => {
 }
 
 exports.getTasks = (req, res) => {
-    dbAuth()
     db.collection('tasks')
         .get()
         .then((collection) => {
@@ -52,7 +40,6 @@ exports.getUserTasks = (req, res) => {
     if(!req.params.userId) {
         res.status(400).send('Invalid Post')
     }
-    dbAuth()
     db.collection('tasks')
         .where('user.userId', '==', req.params.userId)
         .get()
@@ -73,7 +60,6 @@ exports.getUserTasks = (req, res) => {
 };
 
 exports.getCompletedTasks = (req, res) => {
-    dbAuth()
     db.collection('tasks')
         .where("status", "==", "Done")
         .get()
@@ -97,7 +83,6 @@ exports.postTask = (req, res) => {
     if(!req.body) {
         res.status(400).send('Invalid Post')
     }
-    dbAuth()
     let now = admin.firestore.FieldValue.serverTimestamp()
     const newTask = req.body
     newTask.created = now
@@ -122,7 +107,6 @@ exports.updateTask = (req, res) => {
     if (!req.params.taskId) {
         res.status(400).send("Invalid Update");
     }
-    dbAuth();
 
     let now = admin.firestore.FieldValue.serverTimestamp();
     const updatedTask = req.body;
