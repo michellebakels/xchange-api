@@ -3,7 +3,7 @@ const {db} = require('../../index')
 
 
 exports.getTaskById = (req, res) => {
-    res.set('Cache-Control', 'public, max-age=300, s-maxage=600')
+    // res.set('Cache-Control', 'public, max-age=300, s-maxage=600')
     if(!req.params || !req.params.taskId) {
         res.send({ message: "No task specified"})
         return

@@ -8,11 +8,12 @@ admin.initializeApp(fbConfig)
 exports.db = admin.firestore()
 
 const { getTasks, postTask, getUserTasks, getTaskById, updateTask, getCompletedTasks } = require("./src/tasks");
-const { getUsers, postUser, updateUser, getSingleUser, getUserById } = require("./src/users");
+const { getUsers, postUser, updateUser, getSingleUser, getUserById, updateUserTransaction } = require("./src/users");
 
 const app = express();
 app.use(cors());
 app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }))
 
 app.get('/tasks', getTasks)
 app.get('/tasks/:userId', getUserTasks)
@@ -25,6 +26,7 @@ app.get('/users', getUsers)
 app.get('/users/:email', getSingleUser)
 app.get('/users/id/:userId', getUserById)
 app.post('/users', postUser)
+app.patch('/users/update/transaction', updateUserTransaction)
 app.patch('/users/:userId', updateUser)
 
 exports.app = functions.https.onRequest(app);

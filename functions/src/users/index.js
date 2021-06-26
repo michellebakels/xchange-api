@@ -98,3 +98,45 @@ exports.updateUser = (req, res) => {
         }))
         .catch((err) => res.status(500).send('error'));
 };
+
+exports.updateUserTransaction = (req, res) => {
+    if (!req.body) {
+        res.status(400).send("Invalid Post");
+    }
+
+    const {requester, assignee, tokens} = req.body;
+
+    db.collection("users")
+        .doc(requester)
+        .get()
+        .then((docsRef) => {
+            const balance = docsRef.data().tokens
+            const updatedBalance = balance - tokens
+
+            db.collection("users")
+                .doc(requester)
+                .update({
+                    tokens: updatedBalance
+                })
+        })
+        .then(() => {
+            db.collection("users")
+                .doc(assignee)
+                .get()
+                .then((docsRef) => {
+                    const balance = docsRef.data().tokens
+                    const updatedBalance = balance + tokens
+
+                    db.collection("users").doc(assignee)
+                        .update({
+                            tokens: updatedBalance
+                        })
+                    res.send({
+                        status: 'success',
+                        message: 'User updated',
+                        statusCode: 200
+                    })
+                })
+        })
+        // .catch((err) => res.status(500).send('error'));
+};
